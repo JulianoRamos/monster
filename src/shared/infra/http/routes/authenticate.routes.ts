@@ -1,40 +1,15 @@
-import { Request, Response, Router } from 'express';
+import { Router } from 'express';
+
+import { AuthenticateUserController } from '../../../../modules/accounts/useCases/AuthenticateUser/AuthenticateUserController';
+import { RefreshTokenController } from '../../../../modules/accounts/useCases/RefreshToken/RefreshTokenController';
 
 const authenticateRoutes = Router();
 
-authenticateRoutes.post('/sessions', (request: Request, response: Response) => {
-  const { email, password } = request.body;
-  console.log(email, password);
+const authenticateUserController = new AuthenticateUserController();
+const refreshTokenController = new RefreshTokenController();
 
-  return response.json({
-    token: 'Meu Token',
-    refreshToken: 'Meu Refrash Token',
-    user: {
-      name: 'Juliano Ramos',
-      email,
-    },
-  });
-});
+authenticateRoutes.post('/sessions', authenticateUserController.handle);
 
-authenticateRoutes.post(
-  '/refreshToken',
-  (request: Request, response: Response) => {
-    const token =
-      request.body.token ||
-      request.headers['x-access-token'] ||
-      request.query.token;
-
-    console.log(token);
-
-    return response.json({
-      token: 'Meu Token',
-      refreshToken: 'Meu Refrash Token',
-      user: {
-        name: 'Juliano Ramos',
-        email: '490meister@gmail.com',
-      },
-    });
-  },
-);
+authenticateRoutes.post('/refreshToken', refreshTokenController.handle);
 
 export { authenticateRoutes };
